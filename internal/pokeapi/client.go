@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"pokedexcli/internal/pokecache"
 	"time"
+
+	"github.com/MaelBriantin/pokedexcli/internal/pokecache"
 )
 
 type Result struct {

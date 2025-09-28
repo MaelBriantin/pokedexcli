@@ -4,14 +4,17 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"pokedexcli/internal/pokecache"
 	"testing"
 	"time"
+
+	"github.com/MaelBriantin/pokedexcli/internal/pokecache"
 )
 
 func fakeAPIResponse() []byte {
 	resp := PokeAPIResponse{
-		Count: 1,
+		Count:    1,
+		Next:     "",
+		Previous: "",
 		Results: []Result{
 			{Name: "test-location", URL: "https://pokeapi.co/api/v2/location-area/1/"},
 		},
