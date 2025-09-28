@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"pokedexcli/internal/pokeAPI"
+	"pokedexcli/internal/pokeapi"
 )
 
 func cleanInput(text string) []string {
@@ -32,7 +32,7 @@ func help(cfg *config) error {
 }
 
 func nextLocationAreas(cfg *config) error {
-	pokeAPIResponse := pokeAPI.GetLocationAreas(cfg.Next)
+	pokeAPIResponse := pokeapi.GetLocationAreas(cfg.Next)
 	cfg.Next = pokeAPIResponse.Next
 	cfg.Previous = pokeAPIResponse.Previous
 	for _, loc := range pokeAPIResponse.Results {
@@ -46,7 +46,7 @@ func previousLocationAreas(cfg *config) error {
 		fmt.Println("you're on the first page")
 		return nil
 	}
-	pokeAPIResponse := pokeAPI.GetLocationAreas(cfg.Previous)
+	pokeAPIResponse := pokeapi.GetLocationAreas(cfg.Previous)
 	cfg.Next = pokeAPIResponse.Next
 	cfg.Previous = pokeAPIResponse.Previous
 	for _, loc := range pokeAPIResponse.Results {
