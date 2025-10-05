@@ -53,10 +53,15 @@ func getCommandRegistry() map[string]cliCommand {
 			description: "Catch a Pokémon (not implemented yet)",
 			callback:    catch,
 		},
+		"inspect": {
+			name:        "inspect",
+			description: "List all the Pokémon you've caught",
+			callback:    inspect,
+		},
 		"pokedex": {
 			name:        "pokedex",
 			description: "List all the Pokémon you've caught",
-			callback:    seePokedex,
+			callback:    listAllCaughtPokemon,
 		},
 	}
 }
@@ -163,15 +168,39 @@ func catch(cfg *config, args []string) error {
 	return nil
 }
 
-func seePokedex(cfg *config, _ []string) error {
+func listAllCaughtPokemon(cfg *config, _ []string) error {
 	pokedex := cfg.Pokedex
 	if len(pokedex) == 0 {
 		fmt.Println("Your Pokedex is empty. Go catch some Pokemon!")
 		return nil
 	}
 	fmt.Println("Your Pokedex:")
-	for name, pokemon := range pokedex {
-		fmt.Printf("- %s (Base Experience: %d, Height: %d, Weight: %d)\n", name, pokemon.BaseExperience, pokemon.Height, pokemon.Weight)
+	for _, pokemon := range pokedex {
+		fmt.Printf("-%s\n", pokemon.Name)
+	}
+	return nil
+}
+
+func inspect(cfg *config, args []string) error {
+	if len(args) > 1 {
+		fmt.Println("Please provide only one Pokemon name")
+		return nil
+	}
+	if len(args) == 0 {
+		return listAllCaughtPokemon(cfg, args)
+	}
+	pokemonName := args[0]
+	pokedex := cfg.Pokedex
+	fmt.Printf("Name: %s\n", pokedex[pokemonName].Name)
+	fmt.Printf("Height: %d\n", pokedex[pokemonName].Height)
+	fmt.Printf("Weight: %d\n", pokedex[pokemonName].Weight)
+	fmt.Printf("Stats:\n")
+	for _, stat := range pokedex[pokemonName].Stats {
+		fmt.Printf("  -%s: %d\n", stat.Stat.Name, stat.BaseStat)
+	}
+	fmt.Printf("Types:\n")
+	for _, t := range pokedex[pokemonName].Types {
+		fmt.Printf("  -%s\n", t.Type.Name)
 	}
 	return nil
 }
