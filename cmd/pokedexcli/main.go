@@ -25,7 +25,7 @@ func main() {
 			continue
 		}
 		if cmd, ok := commandRegistry[command]; ok {
-			if err := cmd.callback(config); err != nil {
+			if err := cmd.callback(config, cleanText[1:]); err != nil {
 				fmt.Println("Error:", err)
 			}
 		} else {

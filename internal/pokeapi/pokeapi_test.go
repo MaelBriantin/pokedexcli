@@ -11,7 +11,7 @@ import (
 )
 
 func fakeAPIResponse() []byte {
-	resp := PokeAPIResponse{
+	resp := LocationPokeAPIResponse{
 		Count:    1,
 		Next:     "",
 		Previous: "",
