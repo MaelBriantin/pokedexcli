@@ -1,0 +1,32 @@
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task: build
+      - task: test
+      - echo "Build and test completed successfully! 🚀"
+    desc: Run build and test tasks
+    silent: true
+
+  build:
+    cmds:
+      - go build -o ./bin/pokedexcli ./cmd/pokedexcli
+      - echo "Build completed 🐹"
+      - echo "Binary is located at ./bin/pokedexcli"
+    desc: Build the pokedexcli binary
+    silent: true
+
+  test:
+    cmds:
+      - go test ./...
+      - echo "All tests passed ✅"
+    desc: Run all tests
+    silent: true
+
+  clean:
+    cmds:
+      - rm -rf bin
+      - echo "Cleaned up the bin directory 🧹"
+    desc: Clean up the bin directory
+    silent: true
