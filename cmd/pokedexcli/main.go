@@ -4,13 +4,16 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/MaelBriantin/pokedexcli/internal/pokeapi"
 )
 
 func main() {
 	commandRegistry := getCommandRegistry()
 	scanner := bufio.NewScanner(os.Stdin)
 	config := &config{
-		Next: "https://pokeapi.co/api/v2/location-area",
+		Next:    "https://pokeapi.co/api/v2/location-area",
+		Pokedex: make(map[string]pokeapi.Pokemon),
 	}
 	for {
 		fmt.Print("Pokedex > ")

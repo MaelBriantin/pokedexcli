@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 
@@ -11,6 +12,7 @@ import (
 type config struct {
 	Next     string
 	Previous string
+	Pokedex  map[string]pokeapi.Pokemon
 }
 
 type cliCommand struct {
@@ -45,6 +47,16 @@ func getCommandRegistry() map[string]cliCommand {
 			name:        "explore",
 			description: "List of all the Pokémon located in a specific location",
 			callback:    exploreLocation,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Catch a Pokémon (not implemented yet)",
+			callback:    catch,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "List all the Pokémon you've caught",
+			callback:    seePokedex,
 		},
 	}
 }
@@ -115,6 +127,51 @@ func exploreLocation(_ *config, args []string) error {
 	fmt.Println("Found Pokemon:")
 	for _, encounter := range pokeAPIResponse.PokemonEncounters {
 		fmt.Printf("- %s\n", encounter.Pokemon.Name)
+	}
+	return nil
+}
+
+func catch(cfg *config, args []string) error {
+	if len(args) > 1 {
+		fmt.Println("You can only catch one Pokemon at a time... Don't be greedy!")
+		return nil
+	}
+	if len(args) < 1 {
+		fmt.Println("Please provide a Pokemon name to catch")
+		return nil
+	}
+	pokedex := cfg.Pokedex
+	pokemon := args[0]
+	if _, exists := pokedex[pokemon]; exists {
+		fmt.Printf("You already caught a %s!\n", pokemon)
+		return nil
+	}
+	pokeAPIResponse := pokeapi.GetPokemonDetails(pokemon)
+	if pokeAPIResponse.Name == "" {
+		fmt.Printf("Could not find a Pokemon named %s\n", pokemon)
+		return nil
+	}
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokeAPIResponse.Name)
+	rndNum := rand.Intn(100)
+	successThreshold := pokeAPIResponse.BaseExperience / 2
+	if rndNum < successThreshold {
+		fmt.Printf("%s escaped!\n", pokeAPIResponse.Name)
+		return nil
+	}
+	fmt.Printf("%s was caught!\n", pokeAPIResponse.Name)
+	pokedex[pokeAPIResponse.Name] = pokeAPIResponse
+	return nil
+}
+
+func seePokedex(cfg *config, _ []string) error {
+	pokedex := cfg.Pokedex
+	if len(pokedex) == 0 {
+		fmt.Println("Your Pokedex is empty. Go catch some Pokemon!")
+		return nil
+	}
+	fmt.Println("Your Pokedex:")
+	for name, pokemon := range pokedex {
+		fmt.Printf("- %s (Base Experience: %d, Height: %d, Weight: %d)\n", name, pokemon.BaseExperience, pokemon.Height, pokemon.Weight)
 	}
 	return nil
 }
